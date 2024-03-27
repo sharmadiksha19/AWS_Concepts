@@ -45,10 +45,10 @@ Lambda's event-driven architecture seamlessly interfaces with S3 events, allowin
         - You can use the requests library to send a GET request and read a CSV file from S3 bucket.
         - Once the GET request is complete, you'll receive a response with appropriate response codes.If the get request is successful, it will return the status code 200. You can get the data from response.text.
 
-The following code demonstrates how to send the GET request and read the response:
-response = requests.get(url)
-if response.status_code == 200: # Parse the CSV data from the response content
-csv_data = response.text
+        The following code demonstrates how to send the GET request and read the response:
+        response = requests.get(url)
+        if response.status_code == 200: # Parse the CSV data from the response content
+        csv_data = response.text
 
         - use the CSV reader to read the CSV content from csv_data and iterate over the reader object to access each row of the CSV file
 
@@ -59,23 +59,22 @@ print(row)
 
 Complete Program:
 
-import requests
-import csv
+      import requests
+      import csv
 
-# URL of the CSV file
-
-url = "https://mrcloudgurudemo.s3.us-east-2.amazonaws.com/sample_csv.csv"
-try: # Send an HTTP GET request to the URL
-response = requests.get(url) # Check if the request was successful (HTTP status code 200)
-if response.status_code == 200: # Parse the CSV data from the response content
-csv_data = response.text # You can now process the CSV data as needed # For example, you can use the csv.reader to read the data
-reader = csv.reader(csv_data.splitlines()) # Iterate through the rows in the CSV
-for row in reader: # Process each row as needed
-print(row)
-else:
-print(f"Failed to fetch data. Status code: {response.status_code}")
-except requests.exceptions.RequestException as e:
-print(f"Error: {e}")
+      # URL of the CSV file
+      url = "https://mrcloudgurudemo.s3.us-east-2.amazonaws.com/sample_csv.csv"
+      try: # Send an HTTP GET request to the URL
+      response = requests.get(url) # Check if the request was successful (HTTP status code 200)
+      if response.status_code == 200: # Parse the CSV data from the response content
+      csv_data = response.text # You can now process the CSV data as needed # For example, you can use the csv.reader to read the data
+      reader = csv.reader(csv_data.splitlines()) # Iterate through the rows in the CSV
+      for row in reader: # Process each row as needed
+      print(row)
+      else:
+      print(f"Failed to fetch data. Status code: {response.status_code}")
+      except requests.exceptions.RequestException as e:
+      print(f"Error: {e}")
 
 **Note**:if you’re using the requests library version 2.30.0 in AWS lambda, you might get a Cannot Import Name DEFAULT*CIPHERS from urllib3.util.ssl* error when any of the dependent libraries try to import the default_ciphers variable from urllib3.
 
@@ -102,25 +101,25 @@ You can solve this error by downgrading the requests library to 2.29.0.
 
 # The following code demonstrates the complete program to read a CSV file from S3 bucket using Boto3:
 
-import boto3
-import pandas as pd
-import io
+    import boto3
+    import pandas as pd
+    import io
 
-def lambda_handler(event, context): # Initialize the S3 client
-s3 = boto3.client('s3') # Specify the S3 bucket and object key of the CSV file
-bucket_name = 'dikshaS3'
-file_key = 'sample_csv.csv'
-try: # Read the CSV file from S3
-response = s3.get_object(Bucket=bucket_name, Key=file_key)
-csv_content = response['Body'].read().decode('utf-8') # Create a Pandas DataFrame
-df = pd.read_csv(io.StringIO(csv_content)) # Now you have your DataFrame (df) for further processing # Example: Print the first 5 rows
-print(df.head(5))
-return {
-'statusCode': 200,
-'body': 'File read successfully into DataFrame.'
-}
-except Exception as e:
-return {
-'statusCode': 500,
-'body': str(e)
-}
+    def lambda_handler(event, context): # Initialize the S3 client
+    s3 = boto3.client('s3') # Specify the S3 bucket and object key of the CSV file
+    bucket_name = 'dikshaS3'
+    file_key = 'sample_csv.csv'
+    try: # Read the CSV file from S3
+    response = s3.get_object(Bucket=bucket_name, Key=file_key)
+    csv_content = response['Body'].read().decode('utf-8') # Create a Pandas DataFrame
+    df = pd.read_csv(io.StringIO(csv_content)) # Now you have your DataFrame (df) for further processing # Example: Print the first 5 rows
+    print(df.head(5))
+    return {
+    'statusCode': 200,
+    'body': 'File read successfully into DataFrame.'
+    }
+    except Exception as e:
+    return {
+    'statusCode': 500,
+    'body': str(e)
+    }
